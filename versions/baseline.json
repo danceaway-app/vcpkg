@@ -1,7 +1,7 @@
 {
   "default": {
     "react-native-bridge": {
-      "baseline": "0.76.5",
+      "baseline": "0.76.6",
       "port-version": 0
     },
     "react-native-callinvoker": {
