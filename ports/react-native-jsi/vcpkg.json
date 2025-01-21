@@ -1,0 +1,19 @@
+{
+  "name": "react-native-jsi",
+  "version": "0.74.2",
+  "description": "JS Interface component of the Facebook's React Native",
+  "homepage": "https://github.com/facebook/react-native",
+  "license": "MIT",
+  "dependencies": [
+    "folly",
+    "glog",
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}
