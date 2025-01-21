@@ -1,0 +1,16 @@
+{
+  "name": "react-native-callinvoker",
+  "version": "0.74.2",
+  "description": "CallInvoker component of the Facebook's React Native",
+  "homepage": "https://github.com/facebook/react-native",
+  "dependencies": [
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}
