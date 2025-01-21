@@ -3,6 +3,10 @@
     "react-native-callinvoker": {
       "baseline": "0.74.2",
       "port-version": 0
+    },
+    "react-native-jsi": {
+      "baseline": "0.74.2",
+      "port-version": 0
     }
   }
 }
