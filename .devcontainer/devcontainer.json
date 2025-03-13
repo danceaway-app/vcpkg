@@ -7,7 +7,8 @@
     "VCPKG_ROOT": "/opt/vcpkg",
     "VCPKG_FORCE_SYSTEM_BINARIES": 1,
     "CMAKE_C_COMPILER": "/etc/alternatives/clang",
-    "CMAKE_CXX_COMPILER": "/etc/alternatives/clang++"
+    "CMAKE_CXX_COMPILER": "/etc/alternatives/clang++",
+    "LLVM_SYMBOLIZER_PATH": "/usr/lib/llvm-19/bin/llvm-symbolizer"
   },
   "remoteUser": "root"
 }
