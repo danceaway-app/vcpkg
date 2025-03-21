@@ -67,16 +67,17 @@ endif()
 
 target_sources(
   sqlite3
-  INTERFACE
-  FILE_SET sqlite3_HEADERS
-  TYPE HEADERS
-  FILES
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sqlite3.h>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sqlite3ext.h>
-)
-target_sources(
-  sqlite3
   PUBLIC
+    FILE_SET sqlite3_HEADERS
+    TYPE HEADERS
+    FILES
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sqlite3.h>
+  INTERFACE
+    FILE_SET sqlite3_API
+    TYPE HEADERS
+    FILES
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sqlite3ext.h>
+  PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sqlite3.c>
 )
 
@@ -103,6 +104,7 @@ install(
     TARGETS sqlite3
     EXPORT danceaway-sqlite3-config
     FILE_SET sqlite3_HEADERS DESTINATION include
+    FILE_SET sqlite3_API DESTINATION include
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
