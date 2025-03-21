@@ -14,7 +14,7 @@
     },
     "sqlite3": {
       "baseline": "2025-02-12--d7d8afd",
-      "port-version": 1
+      "port-version": 2
     }
   }
 }
