@@ -29,58 +29,67 @@ else()
   set(SQLITE_API "")
 endif()
 
-set(SQLITE_OS_UNIX "1")
+file(
+  COPY "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt"
+  DESTINATION "${SOURCE_PATH}"
+)
 
-file(COPY "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt" DESTINATION "${SOURCE_PATH}")
+vcpkg_check_features(
+  OUT_FEATURE_OPTIONS FEATURE_OPTIONS
+  FEATURES
+    cfg-mem-mgmt                SQLITE_ENABLE_MEMORY_MANAGEMENT
+    cfg-memsys5                 SQLITE_ENABLE_MEMSYS5
+    ext-icu                     SQLITE_ENABLE_ICU
+    ext-rtree                   SQLITE_ENABLE_RTREE
+    ext-fts5                    SQLITE_ENABLE_FTS5
+    ext-geopoly                 SQLITE_ENABLE_GEOPOLY
+    feat-atomic-write           SQLITE_ENABLE_ATOMIC_WRITE
+    feat-batch-atomic-write     SQLITE_ENABLE_BATCH_ATOMIC_WRITE
+    feat-column-metadata        SQLITE_ENABLE_COLUMN_METADATA
+    feat-vtab-bytecode          SQLITE_ENABLE_BYTECODE_VTAB
+    feat-vtab-dbpage            SQLITE_ENABLE_DBPAGE_VTAB
+    feat-vtab-dbstat            SQLITE_ENABLE_DBSTAT_VTAB
+    feat-vtab-statement         SQLITE_ENABLE_STMTVTAB
+    feat-math-funcs             SQLITE_ENABLE_MATH_FUNCTIONS
+    fact-preupdate-hook         SQLITE_ENABLE_PREUPDATE_HOOK
+    feat-session                SQLITE_ENABLE_SESSION
+    feat-snapshot               SQLITE_ENABLE_SNAPSHOT
+    feat-stat4                  SQLITE_ENABLE_STAT4
+    feat-update-delete-limit    SQLITE_ENABLE_UPDATE_DELETE_LIMIT
+    feat-like-dontmatch-blob    SQLITE_LIKE_DOESNT_MATCH_BLOBS
+    feat-omit-deprecated        SQLITE_OMIT_DEPRECATED
+    feat-omit-shared-cache      SQLITE_OMIT_SHARED_CACHE
+)
 
 vcpkg_cmake_configure(
-    SOURCE_PATH "${SOURCE_PATH}"
-    OPTIONS
-      SQLITE_ENABLE_ATOMIC_WRITE=ON
-      SQLITE_ENABLE_BATCH_ATOMIC_WRITE=ON
-      SQLITE_ENABLE_COLUMN_METADATA=ON
-      SQLITE_ENABLE_BYTECODE_VTAB=ON
-      SQLITE_ENABLE_DBPAGE_VTAB=ON
-      SQLITE_ENABLE_DBSTAT_VTAB=ON
-      SQLITE_ENABLE_FTS5=ON
-      SQLITE_ENABLE_GEOPOLY=ON
-      SQLITE_ENABLE_ICU=ON
-      SQLITE_ENABLE_MATH_FUNCTIONS=ON
-      SQLITE_ENABLE_MEMORY_MANAGEMENT=ON
-      SQLITE_ENABLE_MEMSYS5=ON
-      SQLITE_ENABLE_PREUPDATE_HOOK=ON
-      SQLITE_ENABLE_RTREE=ON
-      SQLITE_ENABLE_SESSION=ON
-      SQLITE_ENABLE_SNAPSHOT=ON
-      SQLITE_ENABLE_STAT4=ON
-      SQLITE_ENABLE_STMTVTAB=ON
-      SQLITE_ENABLE_UPDATE_DELETE_LIMIT=ON
-      SQLITE_LIKE_DOESNT_MATCH_BLOBS=ON
-      SQLITE_OMIT_DEPRECATED=ON
-      SQLITE_OMIT_PROGRESS_CALLBACK=ON
-      SQLITE_OMIT_SHARED_CACHE=ON
-      SQLITE_DQS=0
-      SQLITE_DEFAULT_CACHE_SIZE=10000
-      SQLITE_DEFAULT_JOURNAL_SIZE_LIMIT=5242880
-      SQLITE_DEFAULT_MMAP_SIZE=5242880
-      SQLITE_DEFAULT_WAL_SYNCHRONOUS=1
-      SQLITE_DEFAULT_SYNCHRONOUS=1
-      SQLITE_MAX_EXPR_DEPTH=0
-      SQLITE_MAX_MEMORY=104857600
-      SQLITE_MAX_MMAP_SIZE=10485760
-      SQLITE_THREADSAFE=1
-      SQLITE_TEMP_STORE=2
-    OPTIONS_DEBUG
-      SQLITE3_SKIP_TOOLS=ON
-    MAYBE_UNUSED_VARIABLES
-      SQLITE_TEMP_STORE=2
+  SOURCE_PATH "${SOURCE_PATH}"
+  OPTIONS
+    ${FEATURE_OPTIONS}
+    -DSQLITE_PROFILE_DANCEAWAY=ON
+  OPTIONS_DEBUG
+    -DSQLITE3_SKIP_TOOLS=ON
 )
 
 vcpkg_cmake_install()
-vcpkg_cmake_config_fixup(
-  PACKAGE_NAME danceaway-${PORT}
-  CONFIG_PATH share/danceaway-${PORT}
+vcpkg_cmake_config_fixup(PACKAGE_NAME danceaway-${PORT})
+# Original amalgamation .c file
+file(
+  INSTALL "${SOURCE_PATH}/sqlite3.c"
+  DESTINATION ${CURRENT_PACKAGES_DIR}/src
 )
-
-file(WRITE "${CURRENT_PACKAGES_DIR}/share/${PORT}/copyright" "SQLite is in the Public Domain.\nhttp://www.sqlite.org/copyright.html\n")
-file(INSTALL "${CMAKE_CURRENT_LIST_DIR}/usage" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}")
+# Construct copyright file
+file(
+  WRITE "${CURRENT_PACKAGES_DIR}/share/${PORT}/copyright"
+  "SQLite is in the Public Domain.\nhttp://www.sqlite.org/copyright.html\n"
+)
+# Copy usage file
+file(
+  INSTALL "${CMAKE_CURRENT_LIST_DIR}/usage"
+  DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
+)
+# Remove duplicated files from debug configuration
+file(
+  REMOVE_RECURSE
+  "${CURRENT_PACKAGES_DIR}/debug/include"
+  "${CURRENT_PACKAGES_DIR}/debug/share"
+)

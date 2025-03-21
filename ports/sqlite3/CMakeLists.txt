@@ -1,16 +1,14 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.30)
 
 project(sqlite3 C)
-
-option(WITH_ZLIB "Build sqlite3 with zlib support" OFF)
-option(SQLITE3_SKIP_TOOLS "Disable build sqlite3 executable" OFF)
 
 add_library(sqlite3 sqlite3.c)
 
 target_include_directories(
   sqlite3
   PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}> $<INSTALL_INTERFACE:include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>
+    $<INSTALL_INTERFACE:include>
 )
 
 target_compile_definitions(
@@ -19,7 +17,67 @@ target_compile_definitions(
     $<$<CONFIG:Debug>:SQLITE_DEBUG=1>
     $<$<CONFIG:Debug>:SQLITE_ENABLE_SELECTTRACE>
     $<$<CONFIG:Debug>:SQLITE_ENABLE_WHERETRACE>
-    $<$<COMPILE_LANGUAGE:RC>:RC_VERONLY>
+)
+
+target_compile_definitions(
+  sqlite3
+  PRIVATE
+    -DSQLITE_OS_UNIX
+    $<$<BOOL:${SQLITE_ENABLE_MEMORY_MANAGEMENT}>:-DSQLITE_ENABLE_MEMORY_MANAGEMENT>
+    $<$<BOOL:${SQLITE_ENABLE_MEMSYS5}>:-DSQLITE_ENABLE_MEMSYS5>
+    $<$<BOOL:${SQLITE_ENABLE_ICU}>:-DSQLITE_ENABLE_ICU>
+    $<$<BOOL:${SQLITE_ENABLE_RTREE}>:-DSQLITE_ENABLE_RTREE>
+    $<$<BOOL:${SQLITE_ENABLE_FTS5}>:-DSQLITE_ENABLE_FTS5>
+    $<$<BOOL:${SQLITE_ENABLE_GEOPOLY}>:-DSQLITE_ENABLE_GEOPOLY>
+    $<$<BOOL:${SQLITE_ENABLE_ATOMIC_WRITE}>:-DSQLITE_ENABLE_ATOMIC_WRITE>
+    $<$<BOOL:${SQLITE_ENABLE_BATCH_ATOMIC_WRITE}>:-DSQLITE_ENABLE_BATCH_ATOMIC_WRITE>
+    $<$<BOOL:${SQLITE_ENABLE_COLUMN_METADATA}>:-DSQLITE_ENABLE_COLUMN_METADATA>
+    $<$<BOOL:${SQLITE_ENABLE_BYTECODE_VTAB}>:-DSQLITE_ENABLE_BYTECODE_VTAB>
+    $<$<BOOL:${SQLITE_ENABLE_DBPAGE_VTAB}>:-DSQLITE_ENABLE_DBPAGE_VTAB>
+    $<$<BOOL:${SQLITE_ENABLE_DBSTAT_VTAB}>:-DSQLITE_ENABLE_DBSTAT_VTAB>
+    $<$<BOOL:${SQLITE_ENABLE_STMTVTAB}>:-DSQLITE_ENABLE_STMTVTAB>
+    $<$<BOOL:${SQLITE_ENABLE_MATH_FUNCTIONS}>:-DSQLITE_ENABLE_MATH_FUNCTIONS>
+    $<$<BOOL:${SQLITE_ENABLE_PREUPDATE_HOOK}>:-DSQLITE_ENABLE_PREUPDATE_HOOK>
+    $<$<BOOL:${SQLITE_ENABLE_SESSION}>:-DSQLITE_ENABLE_SESSION>
+    $<$<BOOL:${SQLITE_ENABLE_SNAPSHOT}>:-DSQLITE_ENABLE_SNAPSHOT>
+    $<$<BOOL:${SQLITE_ENABLE_STAT4}>:-DSQLITE_ENABLE_STAT4>
+    $<$<BOOL:${SQLITE_ENABLE_UPDATE_DELETE_LIMIT}>:-DSQLITE_ENABLE_UPDATE_DELETE_LIMIT>
+    $<$<BOOL:${SQLITE_LIKE_DOESNT_MATCH_BLOBS}>:-DSQLITE_LIKE_DOESNT_MATCH_BLOBS>
+    $<$<BOOL:${SQLITE_OMIT_DEPRECATED}>:-DSQLITE_OMIT_DEPRECATED>
+    $<$<BOOL:${SQLITE_OMIT_SHARED_CACHE}>:-DSQLITE_OMIT_SHARED_CACHE>
+)
+
+if (SQLITE_PROFILE_DANCEAWAY)
+  target_compile_definitions(
+    sqlite3
+    PRIVATE
+      DSQLITE_THREADSAFE=1
+      DSQLITE_TEMP_STORE=2
+      DSQLITE_DQS=0
+      DSQLITE_DEFAULT_CACHE_SIZE=10000
+      DSQLITE_DEFAULT_JOURNAL_SIZE_LIMIT=5242880
+      DSQLITE_DEFAULT_MMAP_SIZE=5242880
+      DSQLITE_DEFAULT_SYNCHRONOUS=1
+      DSQLITE_DEFAULT_WAL_SYNCHRONOUS=1
+      DSQLITE_MAX_EXPR_DEPTH=0
+      DSQLITE_MAX_MEMORY=104857600
+      DSQLITE_MAX_MMAP_SIZE=10485760
+  )
+endif()
+
+target_sources(
+  sqlite3
+  INTERFACE
+  FILE_SET sqlite3_HEADERS
+  TYPE HEADERS
+  FILES
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sqlite3.h>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sqlite3ext.h>
+)
+target_sources(
+  sqlite3
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sqlite3.c>
 )
 
 if (BUILD_SHARED_LIBS)
@@ -30,40 +88,28 @@ if (BUILD_SHARED_LIBS)
   )
 endif()
 
-include(CMakeFindDependencyMacro)
 find_package(Threads REQUIRED)
 target_link_libraries(sqlite3 PRIVATE Threads::Threads ${CMAKE_DL_LIBS})
 
-if(SQLITE_ENABLE_FTS5 OR SQLITE_ENABLE_MATH_FUNCTIONS)
-  find_library(HAVE_LIBM m)
-  if(HAVE_LIBM)
-    target_link_libraries(sqlite3 PRIVATE m)
-  endif()
+find_library(HAVE_LIBM m)
+if(HAVE_LIBM)
+  target_link_libraries(sqlite3 PRIVATE m)
 endif()
 
-if(SQLITE_ENABLE_ICU)
-  find_package(ICU COMPONENTS uc i18n REQUIRED)
-  target_link_libraries(sqlite3 PRIVATE ICU::uc ICU::i18n)
-endif()
+find_package(ICU COMPONENTS uc i18n REQUIRED)
+target_link_libraries(sqlite3 PRIVATE ICU::uc ICU::i18n)
 
 install(
     TARGETS sqlite3
-    EXPORT danceaway-sqlite3-targets
+    EXPORT danceaway-sqlite3-config
+    FILE_SET sqlite3_HEADERS DESTINATION include
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
 )
 
 install(
-  FILES
-    sqlite3.h sqlite3ext.h
-    sqlite3.c
-  DESTINATION share/danceaway-sqlite3/amalgamantion
-  CONFIGURATIONS Release
-)
-install(
-  EXPORT danceaway-sqlite3-targets
+  EXPORT danceaway-sqlite3-config
   NAMESPACE danceaway::sqlite3::
-  FILE danceaway-sqlite3-targets.cmake
   DESTINATION share/danceaway-sqlite3
 )

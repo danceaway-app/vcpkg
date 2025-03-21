@@ -1,11 +1,11 @@
 {
   "name": "sqlite3",
   "version-string": "2025-02-12--d7d8afd",
+  "port-version": 1,
   "description": "SQLite is a software library that implements a self-contained, serverless, zero-configuration, transactional SQL database engine.",
   "homepage": "https://sqlite.org/",
   "license": "blessing",
   "dependencies": [
-    "icu",
     {
       "name": "vcpkg-cmake",
       "host": true
@@ -14,5 +14,108 @@
       "name": "vcpkg-cmake-config",
       "host": true
     }
-  ]
+  ],
+  "default-features": [
+    "cfg-mem-mgmt",
+    "cfg-memsys5",
+    "ext-fts5",
+    "ext-geopoly",
+    "ext-icu",
+    "ext-json1",
+    "ext-rtree",
+    "ext-sqlite-vec",
+    "fact-preupdate-hook",
+    "feat-atomic-write",
+    "feat-batch-atomic-write",
+    "feat-column-metadata",
+    "feat-like-dontmatch-blob",
+    "feat-math-funcs",
+    "feat-omit-deprecated",
+    "feat-omit-shared-cache",
+    "feat-session",
+    "feat-snapshot",
+    "feat-stat4",
+    "feat-update-delete-limit",
+    "feat-vtab-bytecode",
+    "feat-vtab-dbpage",
+    "feat-vtab-dbstat",
+    "feat-vtab-statement"
+  ],
+  "features": {
+    "cfg-mem-mgmt": {
+      "description": "Adds extra logic to SQLite that allows it to release unused memory upon request"
+    },
+    "cfg-memsys5": {
+      "description": "Includes code in SQLite that implements an alternative memory allocator, version 5"
+    },
+    "ext-fts5": {
+      "description": "Adds full-text search engine version 5"
+    },
+    "ext-geopoly": {
+      "description": "Adds Geopoly extension"
+    },
+    "ext-icu": {
+      "description": "Adds ICU (Unicode) extension",
+      "dependencies": [
+        "icu"
+      ]
+    },
+    "ext-json1": {
+      "description": "Adds JSON1 extension (no-op, always enabled)"
+    },
+    "ext-rtree": {
+      "description": "Adds R*Tree index extension"
+    },
+    "ext-sqlite-vec": {
+      "description": "Adds sqlite-vec (external) extension (no-op, embedded into amalgamation)"
+    },
+    "fact-preupdate-hook": {
+      "description": "Enables API for rowid changes hook"
+    },
+    "feat-atomic-write": {
+      "description": "Enables atomic page writes if supported by a target filesystem"
+    },
+    "feat-batch-atomic-write": {
+      "description": "Enables batched atomic page writes if supported by a target filesystem"
+    },
+    "feat-column-metadata": {
+      "description": "Enables API of access to metadata about tables and queries"
+    },
+    "feat-like-dontmatch-blob": {
+      "description": "Disables LIKE to work over BLOBs"
+    },
+    "feat-math-funcs": {
+      "description": "Enables built-in math functions"
+    },
+    "feat-omit-deprecated": {
+      "description": "Perf: Omits deprecated interfaces and features"
+    },
+    "feat-omit-shared-cache": {
+      "description": "Perf: Disables shared cache between db connections"
+    },
+    "feat-session": {
+      "description": "Enables sesssion mechanism to record cumulative table changes"
+    },
+    "feat-snapshot": {
+      "description": "Enables snapshots API"
+    },
+    "feat-stat4": {
+      "description": "Enables query planner and ANALYZE additional logic"
+    },
+    "feat-update-delete-limit": {
+      "description": "Enables ORDER BY and LIMIT clause on UPDATE and DELETE statements"
+    },
+    "feat-vtab-bytecode": {
+      "description": "Enables virtual tables with prepared statemens metadata"
+    },
+    "feat-vtab-dbpage": {
+      "description": "Enables virtual table interface to direct db file pages operations"
+    },
+    "feat-vtab-dbstat": {
+      "description": "Enables virtual table with disk space usage metadata"
+    },
+    "feat-vtab-statement": {
+      "description": "Enables virtual table with db connection metadata"
+    }
+  }
 }
