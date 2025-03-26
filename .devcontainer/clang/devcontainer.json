@@ -1,0 +1,19 @@
+{
+  "name": "c/c++/vcpkg container",
+  "build": {
+    "dockerfile": "clang.dockerfile"
+  },
+  "remoteEnv": {
+    "VCPKG_ROOT": "/opt/vcpkg",
+    "VCPKG_BINARY_SOURCES": "default,readwrite;files,/opt/vcpkg-binary-cache,readwrite",
+    "VCPKG_FORCE_SYSTEM_BINARIES": 1,
+    "CMAKE_C_COMPILER_LAUNCHER": "/usr/bin/sccache",
+    "CMAKE_C_COMPILER": "/etc/alternatives/clang",
+    "CMAKE_CXX_COMPILER_LAUNCHER": "/usr/bin/sccache",
+    "CMAKE_CXX_COMPILER": "/etc/alternatives/clang++",
+    "LLVM_SYMBOLIZER_PATH": "/usr/lib/llvm-19/bin/llvm-symbolizer",
+    "LC_ALL": "C",
+    "LANG": "C"
+  },
+  "remoteUser": "root"
+}

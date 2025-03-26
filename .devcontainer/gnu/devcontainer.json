@@ -1,0 +1,18 @@
+{
+  "name": "c/c++/vcpkg container",
+  "build": {
+    "dockerfile": "gcc.dockerfile"
+  },
+  "remoteEnv": {
+    "VCPKG_ROOT": "/opt/vcpkg",
+    "VCPKG_BINARY_SOURCES": "default,readwrite;files,/opt/vcpkg-binary-cache,readwrite",
+    "VCPKG_FORCE_SYSTEM_BINARIES": 1,
+    "CMAKE_C_COMPILER_LAUNCHER": "/usr/bin/sccache",
+    "CMAKE_C_COMPILER": "/etc/alternatives/gcc",
+    "CMAKE_CXX_COMPILER_LAUNCHER": "/usr/bin/sccache",
+    "CMAKE_CXX_COMPILER": "/etc/alternatives/g++",
+    "LC_ALL": "C",
+    "LANG": "C"
+  },
+  "remoteUser": "root"
+}

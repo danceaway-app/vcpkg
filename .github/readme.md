@@ -20,6 +20,36 @@
 - Add (if it's the first one added) or update package's version in `versions/baseline.json` (it always points to the latest within the registry)
 - `vcpkg --x-builtin-ports-root=./ports --x-builtin-registry-versions-dir=./versions x-add-version --all --verbose` in the root directory
 
+### Devcontainer commands
+
+Clang
+```sh
+# vcpkg --help
+# vcpkg install --debug --clean-buildtrees-after-build --no-print-usage --overlay-ports=./ports/ <portname>
+# vcpkg x-ci-clean
+# vcpkg x-add-version --x-builtin-ports-root=./ports --x-builtin-registry-versions-dir=./versions --all --verbose
+devcontainer up --config=.devcontainer/clang/devcontainer.json --remove-existing-container --id-label=label=vcpkg-clang --workspace-folder .
+# devcontainer exec --id-label=label=vcpkg-clang --config=.devcontainer/clang/devcontainer.json --workspace-folder . <command>
+devcontainer exec --id-label=label=vcpkg-clang --config=.devcontainer/clang/devcontainer.json --workspace-folder . vcpkg install --debug --clean-buildtrees-after-build --no-print-usage --overlay-ports=./ports/ hermes
+devcontainer exec --id-label=label=vcpkg-clang --config=.devcontainer/clang/devcontainer.json --workspace-folder . vcpkg x-ci-clean
+devcontainer exec --id-label=label=vcpkg-clang --config=.devcontainer/clang/devcontainer.json --workspace-folder . vcpkg remove hermes
+devcontainer exec --id-label=label=vcpkg-clang --config=.devcontainer/clang/devcontainer.json --workspace-folder . vcpkg x-add-version --x-builtin-ports-root=./ports --x-builtin-registry-versions-dir=./versions  --all --verbose
+```
+
+GCC
+```sh
+# vcpkg --help
+# vcpkg install --debug --clean-buildtrees-after-build --no-print-usage --overlay-ports=./ports/ <portname>
+# vcpkg x-ci-clean
+# vcpkg x-add-version --x-builtin-ports-root=./ports --x-builtin-registry-versions-dir=./versions --all --verbose
+devcontainer up --config=.devcontainer/gnu/devcontainer.json --remove-existing-container --id-label=label=vcpkg-gcc --workspace-folder .
+# devcontainer exec --id-label=label=vcpkg-gcc --config=.devcontainer/gnu/devcontainer.json --workspace-folder . <command>
+devcontainer exec --id-label=label=vcpkg-gcc --config=.devcontainer/gnu/devcontainer.json --workspace-folder . vcpkg install --debug --clean-buildtrees-after-build --no-print-usage --overlay-ports=./ports/ hermes
+devcontainer exec --id-label=label=vcpkg-gcc --config=.devcontainer/gnu/devcontainer.json --workspace-folder . vcpkg x-ci-clean
+devcontainer exec --id-label=label=vcpkg-gcc --config=.devcontainer/gnu/devcontainer.json --workspace-folder . vcpkg remove hermes
+devcontainer exec --id-label=label=vcpkg-gcc --config=.devcontainer/gnu/devcontainer.json --workspace-folder . vcpkg x-add-version --x-builtin-ports-root=./ports --x-builtin-registry-versions-dir=./versions  --all --verbose
+```
+
 ### Example
 
 Imagine that we're at the moment of RN 0.76.6 release, while this registry points to the RN 0.76.5 as the latest. Our goal is to update `react-native-jsi` port to the latest version.
