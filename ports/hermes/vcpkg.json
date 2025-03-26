@@ -1,6 +1,7 @@
 {
   "name": "hermes",
   "version-string": "2024-11-25-RNv0.77.0",
+  "port-version": 1,
   "description": "Hermes is a JavaScript engine optimized for fast start-up of React Native apps",
   "homepage": "https://github.com/facebook/hermes",
   "dependencies": [
@@ -67,6 +68,9 @@
     },
     "hermes-linked-statically": {
       "description": "Link Hermes statically. May only work on GNU/Linux."
+    },
+    "tests": {
+      "description": "Enable test suite build"
     },
     "tools": {
       "description": "Enable CLI tools"

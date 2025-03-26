@@ -14,6 +14,7 @@ file(
 vcpkg_check_features(
   OUT_FEATURE_OPTIONS FEATURE_OPTIONS
   FEATURES
+    tests                                 HERMES_ENABLE_TEST_SUITE
     tools                                 HERMES_ENABLE_TOOLS
     android                               HERMES_IS_ANDROID
     hardened                              HERMES_HARDENED
