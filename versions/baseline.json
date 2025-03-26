@@ -2,7 +2,7 @@
   "default": {
     "hermes": {
       "baseline": "2024-11-25-RNv0.77.0",
-      "port-version": 0
+      "port-version": 1
     },
     "react-native-bridge": {
       "baseline": "0.78.1",
