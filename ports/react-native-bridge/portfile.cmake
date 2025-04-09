@@ -1,8 +1,8 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO facebook/react-native
-    REF v0.78.2
-    SHA512 ab0aaa8fb06ccfb631a7beca0d2491ad8377e89def9e2acfcb735af3528d67f95fb0100d2766e4f9649f0dde003230c30d7cd08ac4c57471eed5acd065fb78f3
+    REF v0.79.0
+    SHA512 11b827117126db2edf2e1dfc37b546b67f150b877b061bd6953b1f71174cb5b3b1a3480751ab0a864addeeb7f25d8c1f4947490aec8a726d9f32ca4355aee934
     HEAD_REF main
 )
 
