@@ -1,4 +1,4 @@
-set(AUTH_TOKEN "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")
+set(AUTH_TOKEN "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")
 
 execute_process(
   COMMAND sh "-c" "curl -fsSL -H 'Authorization: Bearer ${AUTH_TOKEN}' https://api.github.com/repos/danceaway-app/sqlite/releases/tags/${VERSION}"
