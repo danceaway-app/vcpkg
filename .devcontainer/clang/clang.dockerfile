@@ -1,1 +1,1 @@
-FROM ghcr.io/danceaway-app/cpp-clang:latest
+FROM ghcr.io/danceaway-app/runner-cpp-clang:latest

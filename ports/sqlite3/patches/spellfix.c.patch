@@ -1,0 +1,19 @@
+diff --git a/ext/misc/spellfix.c b/ext/misc/spellfix.c
+index f51f3bdfe0..b8a32b679f 100644
+--- a/ext/misc/spellfix.c
++++ b/ext/misc/spellfix.c
+@@ -14,8 +14,12 @@
+ ** to search a large vocabulary for close matches.  See separate
+ ** documentation (http://sqlite.org/spellfix1.html) for details.
+ */
+-#include "sqlite3ext.h"
+-SQLITE_EXTENSION_INIT1
++#ifndef SQLITE_CORE
++  #include "sqlite3ext.h"
++  SQLITE_EXTENSION_INIT1
++#else
++  #include "sqlite3.h"
++#endif
+ 
+ #ifndef SQLITE_AMALGAMATION
+ # if !defined(NDEBUG) && !defined(SQLITE_DEBUG)

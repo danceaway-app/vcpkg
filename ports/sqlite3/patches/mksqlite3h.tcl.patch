@@ -1,0 +1,13 @@
+diff --git a/tool/mksqlite3h.tcl b/tool/mksqlite3h.tcl
+index 6bbfa8c8bc..c79402c352 100644
+--- a/tool/mksqlite3h.tcl
++++ b/tool/mksqlite3h.tcl
+@@ -120,6 +120,8 @@ set filelist [subst {
+   $TOP/ext/rtree/sqlite3rtree.h
+   $TOP/ext/session/sqlite3session.h
+   $TOP/ext/fts5/fts5.h
++  $TOP/ext/misc/spellfix.h
++  $TOP/ext/misc/sqlite-vec.h
+ }]
+ if {$enable_recover} {
+   lappend filelist "$TOP/ext/recover/sqlite3recover.h"
