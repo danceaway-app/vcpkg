@@ -1,95 +1,106 @@
-set(AUTH_TOKEN "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")
+set(SQLITEVEC_GIT_HASH "a2dd24f27ec7e4a5743e58f5ab6835deea5db58d")
 
-execute_process(
-  COMMAND sh "-c" "curl -fsSL -H 'Authorization: Bearer ${AUTH_TOKEN}' https://api.github.com/repos/danceaway-app/sqlite/releases/tags/${VERSION}"
-  COMMAND sh "-c" "jq -r '.assets[].url'"
-  OUTPUT_VARIABLE DOWNLOAD_URL
-  OUTPUT_STRIP_TRAILING_WHITESPACE
+vcpkg_from_github(
+    OUT_SOURCE_PATH SQLITE_SOURCE_PATH
+    REPO sqlite/sqlite
+    REF version-3.50.1
+    SHA512 be039f3cd1e0647fac0dbd90f24316bade56c86bfd08f88c4ac7d0006498b9a779cdb4d4cbf750e293ac660b6bf80746a38e198b144566863df9d4e3d5cb093d
+    HEAD_REF main
+    PATCHES
+      patches/mksqlite3h.tcl.patch
+      patches/spellfix.c.patch
 )
-
-vcpkg_download_distfile(
-  ARCHIVE
-  URLS ${DOWNLOAD_URL}
-  FILENAME "amalgamation.tar.gz"
-  SHA512 8cc3af9d3bb1368c4ffb024972f160a04228aa3c56eb01af2cdd35ace5bec2e6f6b77c1dc9850234639248cc016962af0db5742c9063e4aa2ad7f367c4e528d7
-  HEADERS
-    "Authorization: Bearer ${AUTH_TOKEN}"
-    "Accept: application/octet-stream"
-)
-
-vcpkg_extract_source_archive(
-  SOURCE_PATH
-  ARCHIVE "${ARCHIVE}"
-  NO_REMOVE_ONE_LEVEL
-)
-
-if(VCPKG_LIBRARY_LINKAGE STREQUAL "dynamic")
-  set(SQLITE_API "__attribute__((visibility(\"default\")))")
-else()
-  set(SQLITE_API "")
-endif()
 
 file(
-  COPY "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt"
-  DESTINATION "${SOURCE_PATH}"
+  COPY "${CMAKE_CURRENT_LIST_DIR}/extra/spellfix.h"
+  DESTINATION "${SQLITE_SOURCE_PATH}/ext/misc/"
 )
 
-vcpkg_check_features(
-  OUT_FEATURE_OPTIONS FEATURE_OPTIONS
-  FEATURES
-    cfg-mem-mgmt                SQLITE_ENABLE_MEMORY_MANAGEMENT
-    cfg-memsys5                 SQLITE_ENABLE_MEMSYS5
-    ext-icu                     SQLITE_ENABLE_ICU
-    ext-rtree                   SQLITE_ENABLE_RTREE
-    ext-fts5                    SQLITE_ENABLE_FTS5
-    ext-geopoly                 SQLITE_ENABLE_GEOPOLY
-    feat-atomic-write           SQLITE_ENABLE_ATOMIC_WRITE
-    feat-batch-atomic-write     SQLITE_ENABLE_BATCH_ATOMIC_WRITE
-    feat-column-metadata        SQLITE_ENABLE_COLUMN_METADATA
-    feat-vtab-bytecode          SQLITE_ENABLE_BYTECODE_VTAB
-    feat-vtab-dbpage            SQLITE_ENABLE_DBPAGE_VTAB
-    feat-vtab-dbstat            SQLITE_ENABLE_DBSTAT_VTAB
-    feat-vtab-statement         SQLITE_ENABLE_STMTVTAB
-    feat-math-funcs             SQLITE_ENABLE_MATH_FUNCTIONS
-    fact-preupdate-hook         SQLITE_ENABLE_PREUPDATE_HOOK
-    feat-session                SQLITE_ENABLE_SESSION
-    feat-snapshot               SQLITE_ENABLE_SNAPSHOT
-    feat-stat4                  SQLITE_ENABLE_STAT4
-    feat-update-delete-limit    SQLITE_ENABLE_UPDATE_DELETE_LIMIT
-    feat-like-dontmatch-blob    SQLITE_LIKE_DOESNT_MATCH_BLOBS
-    feat-omit-deprecated        SQLITE_OMIT_DEPRECATED
-    feat-omit-shared-cache      SQLITE_OMIT_SHARED_CACHE
+vcpkg_from_github(
+    OUT_SOURCE_PATH SQLITEVEC_SOURCE_PATH
+    REPO asg017/sqlite-vec
+    REF ${SQLITEVEC_GIT_HASH}
+    SHA512 1adcc6d90a7c4efddb3eac5512762b4c4bf621305d826c3dc38f273d96160aa42642875b4aa471c0c39671848c69cd26cafd7723e5b83b2cbfe526097d3621a1
+    HEAD_REF main
+    PATCHES
+      patches/sqlite-vec.c.patch
 )
 
-vcpkg_cmake_configure(
-  SOURCE_PATH "${SOURCE_PATH}"
+vcpkg_execute_build_process(
+  COMMAND sh -c " VERSION=$(cat VERSION) \
+    DATE=$(date -r VERSION +'%FT%TZ%z') \
+    SOURCE=${SQLITEVEC_GIT_HASH} \
+    VERSION_MAJOR=$(echo $VERSION | cut -d. -f1) \
+    VERSION_MINOR=$(echo $VERSION | cut -d. -f2) \
+    VERSION_PATCH=$(echo $VERSION | cut -d. -f3 | cut -d- -f1) \
+    envsubst < sqlite-vec.h.tmpl > sqlite-vec.h"
+  WORKING_DIRECTORY ${SQLITEVEC_SOURCE_PATH}
+  LOGNAME sqlite-vec
+)
+
+vcpkg_execute_build_process(
+  COMMAND sh -c "sed -i '/#ifndef SQLITE_CORE.*/,/#endif/d' sqlite-vec.h"
+  WORKING_DIRECTORY ${SQLITEVEC_SOURCE_PATH}
+  LOGNAME sqlite-vec
+)
+
+file(
+  COPY
+    "${SQLITEVEC_SOURCE_PATH}/sqlite-vec.h"
+    "${SQLITEVEC_SOURCE_PATH}/sqlite-vec.c"
+  DESTINATION "${SQLITE_SOURCE_PATH}/ext/misc/"
+)
+
+vcpkg_make_configure(
+    SOURCE_PATH "${SQLITE_SOURCE_PATH}"
+    DISABLE_DEFAULT_OPTIONS
+    OPTIONS
+      --disable-tcl
+      --memsys5
+      --rtree
+      --fts5
+      --geopoly
+      --session
+      --update-limit
+      --amalgamation-extra-src=${SQLITE_SOURCE_PATH}/ext/misc/spellfix.c
+      --amalgamation-extra-src=${SQLITE_SOURCE_PATH}/ext/misc/sqlite-vec.c
+    OPTIONS_RELEASE
+      --bindir=${prefix}/tools/${PORT}/bin
+      --sbindir=${prefix}/tools/${PORT}/sbin
+      --libdir=${prefix}/lib
+      --includedir=${prefix}/include
+      --mandir=${prefix}/share/${PORT}
+    OPTIONS_DEBUG
+      --debug
+      --bindir=${prefix}/debug/tools/${PORT}/bin
+      --sbindir=${prefix}/debug//tools/${PORT}/sbin
+      --libdir=${prefix}/debug//lib
+      --includedir=${prefix}/debug/include
+      --mandir=${prefix}/debug/share/${PORT}
+)
+
+vcpkg_make_install(
   OPTIONS
-    ${FEATURE_OPTIONS}
-    SQLITE_PROFILE_DANCEAWAY
+    -e OPTIONS=" -DSQLITE_CORE -DSQLITE_ENABLE_MEMORY_MANAGEMENT -DSQLITE_ENABLE_ATOMIC_WRITE -DSQLITE_ENABLE_BATCH_ATOMIC_WRITE -DSQLITE_ENABLE_COLUMN_METADATA -DSQLITE_ENABLE_SNAPSHOT -DSQLITE_ENABLE_STAT4 -DSQLITE_LIKE_DOESNT_MATCH_BLOBS -DSQLITE_OMIT_DEPRECATED -DSQLITE_OMIT_SHARED_CACHE -DSQLITE_MAX_MEMORY=104857600 -DSQLITE_DEFAULT_CACHE_SIZE=10000 -DSQLITE_DEFAULT_JOURNAL_SIZE_LIMIT=5242880 -DSQLITE_DEFAULT_MMAP_SIZE=5242880 -DSQLITE_DEFAULT_WAL_SYNCHRONOUS=1 -DSQLITE_DEFAULT_SYNCHRONOUS=1 -DSQLITE_MAX_EXPR_DEPTH=0 -DSQLITE_MAX_MEMORY=104857600 -DSQLITE_MAX_MMAP_SIZE=10485760 -DSQLITE_THREADSAFE=1 -DSQLITE_TEMP_STORE=2"
+  OPTIONS_RELEASE
   OPTIONS_DEBUG
-    SQLITE3_SKIP_TOOLS
-  MAYBE_UNUSED_VARIABLES
-    SQLITE3_SKIP_TOOLS
+    -e OPTIONS=" -DSQLITE_DEBUG=1 -DSQLITE_ENABLE_SELECTTRACE -DSQLITE_ENABLE_WHERETRACE"
 )
 
-vcpkg_cmake_install()
-vcpkg_cmake_config_fixup(PACKAGE_NAME danceaway-${PORT})
-# Original amalgamation .c file
 file(
-  INSTALL "${SOURCE_PATH}/sqlite3.c"
+  INSTALL "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel/sqlite3.c"
   DESTINATION ${CURRENT_PACKAGES_DIR}/src
 )
-# Construct copyright file
-file(
-  WRITE "${CURRENT_PACKAGES_DIR}/share/${PORT}/copyright"
-  "SQLite is in the Public Domain.\nhttp://www.sqlite.org/copyright.html\n"
+
+vcpkg_fixup_pkgconfig()
+
+vcpkg_copy_pdbs()
+
+vcpkg_install_copyright(
+  FILE_LIST
+    "${SQLITE_SOURCE_PATH}/LICENSE.md"
 )
-# Copy usage file
-file(
-  INSTALL "${CMAKE_CURRENT_LIST_DIR}/usage"
-  DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
-)
-# Remove duplicated files from debug configuration
+
 file(
   REMOVE_RECURSE
   "${CURRENT_PACKAGES_DIR}/debug/include"

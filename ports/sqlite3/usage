@@ -1,4 +1,0 @@
-sqlite3 provides CMake targets:
-
-    find_package(danceaway-sqlite3 CONFIG REQUIRED)
-    target_link_libraries(main PRIVATE danceaway::sqlite3::sqlite3)
