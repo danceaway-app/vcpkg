@@ -1,6 +1,6 @@
 {
   "name": "react-native-callinvoker",
-  "version": "0.81.0",
+  "version": "0.81.4",
   "description": "CallInvoker component of the Facebook's React Native",
   "homepage": "https://github.com/facebook/react-native",
   "dependencies": [
