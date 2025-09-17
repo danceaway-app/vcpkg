@@ -5,7 +5,7 @@
       "port-version": 1
     },
     "react-native-bridge": {
-      "baseline": "0.81.0",
+      "baseline": "0.81.4",
       "port-version": 0
     },
     "react-native-callinvoker": {
