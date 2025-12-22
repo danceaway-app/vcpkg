@@ -1,6 +1,6 @@
 {
   "name": "react-native-bridge",
-  "version": "0.83.0",
+  "version": "0.83.1",
   "description": "Native-to-JS Bridge component of the Facebook's React Native",
   "homepage": "https://github.com/facebook/react-native",
   "dependencies": [
