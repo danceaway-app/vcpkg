@@ -63,8 +63,13 @@ Imagine that we're at the moment of RN 0.76.6 release, while this registry point
 - There would be at least one error caused by the `SHA512` being set to 0 previously. In the output the correct hash is printed, use it to modify `portfile.cmake`'s `SHA512` (this is DA official WAY, btw)
 - If needed, build state in the container could be reset with `devcontainer exec --workspace-folder . vcpkg x-ci-clean` (other commands are described by `vcpkg help commands`)
 - Once the new version builds and installed, commit changes in the `port` directory. I suggest to form commit message as "[react-native-jsi] 0.76.6 port files"
-- Run `git rev-parse HEAD:ports/react-native-jsi` to obtain commit hash
-- Modify `versions/r-/react-native-jsi.json`: add new version object, use commit hash from previous step to fill `git-tree` field value
-- Modify `versions/baseline.json`: change `baseline` version to the latest, 0.76.6 in this example
-- Commit change in the `versions` directory. I suggest to form commit message as "[react-native-jsi] 0.76.6 add to baseline"
-- Run `devcontainer exec --workspace-folder . vcpkg --x-builtin-ports-root=./ports --x-builtin-registry-versions-dir=./versions x-add-version --all --verbose`: if everything is done correctly, green output is printed. Otherwise, error in red would be present and (!) versions in baseline.json and react-native-jsi.json would be reverted
+- Now, adding the changes to the history (baseline) could be done either manually or by vcpkg command, choose your poison:
+- Manually:
+    - Run `git rev-parse HEAD:ports/react-native-jsi` to obtain commit hash
+    - Modify `versions/r-/react-native-jsi.json`: add new version object, use commit hash from previous step to fill `git-tree` field value
+    - Modify `versions/baseline.json`: change `baseline` version to the latest, 0.76.6 in this example
+    - Commit change in the `versions` directory. I suggest to form commit message as "[react-native-jsi] 0.76.6 add to baseline"
+    - Run `devcontainer exec --workspace-folder . vcpkg x-add-version --x-builtin-ports-root=./ports --x-builtin-registry-versions-dir=./versions --all --verbose`: if everything is done correctly, green output is printed. Otherwise, error in red would be present and (!) versions in baseline.json and react-native-jsi.json would be reverted
+- Via vcpkg:
+    - Run `devcontainer exec --workspace-folder . vcpkg x-add-version --x-builtin-ports-root=./ports --x-builtin-registry-versions-dir=./versions --all --verbose`
+    - Commit change in the `versions` directory. I suggest to form commit message as "[react-native-jsi] 0.76.6 add to baseline"
