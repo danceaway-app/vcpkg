@@ -1,0 +1,15 @@
+{
+  "$schema": "https://claude.ai/schemas/claude-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(devcontainer up:*)",
+      "Bash(devcontainer exec:*)",
+      "Bash(git rev-parse:*)"
+    ],
+    "deny": []
+  },
+  "hooks": {
+    "preToolUse": [],
+    "postToolUse": []
+  }
+}
