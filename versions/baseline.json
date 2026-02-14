@@ -9,7 +9,7 @@
       "port-version": 0
     },
     "react-native-jsi": {
-      "baseline": "0.83.2",
+      "baseline": "0.84.0",
       "port-version": 0
     },
     "sqlite3": {
