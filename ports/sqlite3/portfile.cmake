@@ -3,8 +3,8 @@ set(SQLITEVEC_GIT_HASH "633eecf5067ab12ef331b3c4500c765f8e6d6da0")
 vcpkg_from_github(
     OUT_SOURCE_PATH SQLITE_SOURCE_PATH
     REPO sqlite/sqlite
-    REF version-3.51.2
-    SHA512 68ed75dffbb7df6d9fb09c46efe205a98535ba5009ea8de25c05d7c978c92f300d78ff28d3bcb3be8c1c9e9e451115b30b2f6b0a57ab3e1da14e4601fcce51bf
+    REF version-3.53.2
+    SHA512 58b59988329767e3d1382845eea90a5e2f6cc68799b2e927254da069c4657e1b78c9a910e4dcd8318563b1b53c9320d1452489fd73dcad97c543aece294d3bbb
     HEAD_REF main
     PATCHES
       patches/mksqlite3h.tcl.patch
