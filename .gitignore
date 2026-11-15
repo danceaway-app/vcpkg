@@ -1,1 +1,4 @@
 .idea
+# Injected by agentic-feature-dev (feature-local commands)
+.claude/commands/send-message.md
+.claude/commands/check-messages.md
